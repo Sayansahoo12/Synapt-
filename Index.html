@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Synapt™ by Sayan Sahoo</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<style>body{background:#020617} .lux{background:radial-gradient(1000px 500px at 15% -10%,#1d4ed8 0%,transparent 60%),radial-gradient(700px 400px at 85% 5%,#d4b483 0%,transparent 50%),#020617} .gold{color:#d4b483} .goldbg{background:linear-gradient(135deg,#d4b483,#8c6a3a)} .glass{backdrop-filter:blur(16px);background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.12)}</style>
+</head>
+<body class="lux text-white">
+<nav class="sticky top-0 z-50 bg-[#020617]/80 backdrop-blur-xl border-b border-white/10 px-5 py-4 flex justify-between items-center">
+<div class="flex items-center gap-3"><div class="w-10 h-10 rounded-xl goldbg flex items-center justify-center font-black text-black">S</div><h1 class="font-extrabold">Synapt™ <span class="gold text-[10px]">BY SAYAN SAHOO</span></h1></div>
+<div class="flex items-center gap-3"><span id="navLevel" class="text-xs bg-white/10 px-4 py-2 rounded-full">Level 1 • 0 XP</span><img src="profile.jpg" class="w-10 h-10 rounded-full border-2 border-[#d4b483] object-cover"></div>
+</nav>
+<section class="px-6 py-10 grid md:grid-cols-2 gap-10 items-center">
+<div><h2 class="text-5xl font-black">Synapt™<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-[#d4b483]">by Sayan</span></h2><p class="mt-4 text-white/60">6 features + Level System. Task koro XP pao Level barao.</p><div class="mt-6 glass p-4 rounded-2xl"><div class="flex justify-between text-xs"><span class="gold">LEVEL</span><span id="xpText">0 / 100 XP</span></div><div class="w-full h-3 bg-white/10 rounded-full mt-2"><div id="xpBar" class="h-full goldbg" style="width:8%"></div></div></div></div>
+<img src="hero.jpg" class="rounded-[2rem] border border-white/20 w-full"></section>
+<section id="features" class="px-6 py-10 grid md:grid-cols-3 gap-4">
+<div onclick="openTab('doubt')" class="glass p-6 rounded-2xl cursor-pointer">💬 <b>Doubt Solver</b><p class="text-xs">+10 XP</p></div>
+<div onclick="openTab('syllabus')" class="glass p-6 rounded-2xl cursor-pointer">📚 <b>Syllabus Hub</b><p class="text-xs">+30 XP</p></div>
+<div onclick="openTab('focus')" class="glass p-6 rounded-2xl cursor-pointer">⏱️ <b>Focus Timer</b><p class="text-xs">+20 XP</p></div>
+<div onclick="openTab('diagram')" class="glass p-6 rounded-2xl cursor-pointer">🎨 <b>Diagram AI</b><p class="text-xs">+15 XP</p></div>
+<div onclick="openTab('voice')" class="glass p-6 rounded-2xl cursor-pointer">🎙️ <b>Voice Notes</b><p class="text-xs">+15 XP</p></div>
+<div onclick="openTab('challenge')" class="goldbg p-6 rounded-2xl text-black cursor-pointer"><b>🏆 Study Challenge</b><p class="text-xs">Level <span id="cardL">1</span> • <span id="cardX">0</span> XP</p></div>
+</section>
+<section class="px-6 pb-20 space-y-6">
+<div id="tab-doubt" class="tab glass p-6 rounded-2xl hidden"><h2>Doubt Solver</h2><div class="flex gap-2 mt-3"><input id="doubtInput" placeholder="Doubt likho" class="flex-1 bg-white/10 rounded-full px-4 py-3"><button onclick="solveDoubt()" class="goldbg text-black px-6 rounded-full font-bold">Ask</button></div><div id="doubtAns" class="mt-3 text-sm"></div></div>
+<div id="tab-syllabus" class="tab glass p-6 rounded-2xl hidden"><h2>Syllabus +30 XP</h2><button onclick="completeTask(30,'Done')" class="mt-3 goldbg text-black px-4 py-2 rounded-full">Mark Done +30 XP</button></div>
+<div id="tab-focus" class="tab glass p-8 rounded-2xl hidden text-center"><div id="timer" class="text-7xl font-black">25:00</div><button onclick="startTimer()" class="mt-4 goldbg text-black px-8 py-3 rounded-full font-bold">Start</button></div>
+<div id="tab-diagram" class="tab glass p-6 rounded-2xl hidden"><canvas id="drawCanvas" width="600" height="300" class="w-full bg-white rounded-xl"></canvas><button onclick="completeTask(15,'Diagram')" class="mt-3 goldbg text-black px-6 py-2 rounded-full">+15 XP</button></div>
+<div id="tab-voice" class="tab glass p-6 rounded-2xl hidden"><button id="micBtn" onclick="toggleVoice()" class="w-16 h-16 rounded-full goldbg text-2xl">🎤</button><div id="voiceOut" class="mt-4 bg-white/10 p-4 rounded-xl">Bolo...</div></div>
+<div id="tab-challenge" class="tab border border-[#d4b483]/30 p-8 rounded-2xl bg-black"><h2 class="text-3xl font-black">Level System</h2><p id="bigL" class="text-2xl font-bold mt-4">Level 1</p><p id="bigT" class="gold">Newbie</p><p id="bigX">0 XP</p><div id="levelMap" class="mt-6 space-y-2 text-sm"></div><button onclick="completeTask(50,'Bonus')" class="mt-6 goldbg text-black px-6 py-3 rounded-full font-bold">Daily Bonus +50 XP</button></div>
+</section>
+<script>
+let xp=parseInt(localStorage.getItem('synapt_xp')||'0'),level=1,titles={1:'Newbie',2:'Explorer',3:'Achiever',4:'Topper',5:'Legend'},th=[0,100,250,500,1000];
+function calc(){if(xp>=1000)level=5;else if(xp>=500)level=4;else if(xp>=250)level=3;else if(xp>=100)level=2;else level=1;}
+function update(){calc();document.getElementById('navLevel').innerText='Level '+level+' • '+xp+' XP';document.getElementById('xpText').innerText=xp+' / '+(level<5?th[level]:1000)+' XP';document.getElementById('xpBar').style.width=Math.min(100,(xp/(level<5?th[level]:1000))*100)+'%';document.getElementById('cardL').innerText=level;document.getElementById('cardX').innerText=xp;let b=document.getElementById('bigL');if(b){b.innerText='Level '+level;document.getElementById('bigT').innerText=titles[level];document.getElementById('bigX').innerText=xp+' XP';}let m=document.getElementById('levelMap');if(m){m.innerHTML=th.map((t,i)=>'<div class="flex justify-between p-2 rounded '+(i+1==level?'bg-[#d4b483]/20':'bg-white/5')+'"><span>Level '+(i+1)+' - '+titles[i+1]+'</span><span>'+t+' XP</span></div>').join('');}localStorage.setItem('synapt_xp',xp);}
+function completeTask(p,msg){xp+=p;update();alert(msg+' +'+p+' XP! Level '+level);}
+function openTab(n){document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));document.getElementById('tab-'+n).classList.remove('hidden');}
+function solveDoubt(){let q=document.getElementById('doubtInput').value;if(!q)return;document.getElementById('doubtAns').innerText='Thinking...';setTimeout(()=>{document.getElementById('doubtAns').innerText='Demo Answer for: '+q;completeTask(10,'Doubt');},600);}
+let tInt,left=1500;function startTimer(){if(tInt)return;tInt=setInterval(()=>{left--;let m=Math.floor(left/60),s=left%60;document.getElementById('timer').innerText=String(m).padStart(2,'0')+':'+String(s).padStart(2,'0');if(left<=0){clearInterval(tInt);tInt=null;left=1500;document.getElementById('timer').innerText='25:00';completeTask(20,'Focus');}},1000);}
+function toggleVoice(){let SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('Use Chrome');return;}let rec=new SR();rec.lang='en-IN';rec.onresult=e=>{document.getElementById('voiceOut').innerText=e.results[0][0].transcript;completeTask(15,'Voice');};rec.start();}
+update();
+</script>
+</body>
+</html>
